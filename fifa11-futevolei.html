@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA 11+ Beach Soccer · Futevôlei</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --sand: #E8DCC8;
+    --sand-light: #F5EFE3;
+    --ink: #1A1612;
+    --ink-soft: #3D3530;
+    --areia: #C4A97D;
+    --alert: #D4522A;
+    --ok: #4A7C59;
+    --caution: #C4882A;
+    --muted: #8A7D6E;
+    --border: #D4C8B0;
+    --white: #FDFAF5;
+    --blue: #3A6B9E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--sand-light);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--ink);
+    padding: 28px 24px 20px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    color: var(--areia);
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sand);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* INTRO BAND */
+  .intro-band {
+    background: var(--ink-soft);
+    color: var(--sand);
+    padding: 14px 24px;
+    font-size: 12px;
+    line-height: 1.7;
+    border-bottom: 2px solid var(--areia);
+  }
+  .intro-band strong { color: var(--areia); }
+
+  /* NAV */
+  .day-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .day-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    padding: 12px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .day-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--areia);
+    font-weight: 500;
+  }
+  .day-btn:hover:not(.active) { color: var(--ink); }
+
+  /* MAIN */
+  .main {
+    padding: 20px 24px 60px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* DAY HEADER */
+  .day-header {
+    margin-bottom: 18px;
+  }
+  .day-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .day-context {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background: var(--sand);
+    color: var(--muted);
+  }
+  .pill.green { border-color: var(--ok); color: var(--ok); background: #EEF4F0; }
+  .pill.orange { border-color: var(--caution); color: var(--caution); background: #FDF7EE; }
+  .pill.blue { border-color: var(--blue); color: var(--blue); background: #EEF3FA; }
+
+  /* INFO BOX */
+  .info-box {
+    background: #EEF3FA;
+    border-left: 3px solid var(--blue);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    border-radius: 0 4px 4px 0;
+  }
+  .info-box strong { color: var(--blue); }
+
+  .caution-box {
+    background: #FDF7EE;
+    border-left: 3px solid var(--caution);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* BLOCK */
+  .block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .block-header {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .block-header:hover { background: var(--sand-light); }
+  .block-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .block-icon { font-size: 15px; }
+  .block-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .block-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .block-badge.green { border-color: var(--ok); color: var(--ok); background: #EEF4F0; }
+  .block-badge.orange { border-color: var(--caution); color: var(--caution); }
+  .block-chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .block.collapsed .block-chevron { transform: rotate(-90deg); }
+  .block-body {}
+  .block.collapsed .block-body { display: none; }
+
+  /* EXERCISE ROW */
+  .ex-row {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--sand-light);
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    align-items: start;
+  }
+  .ex-row:last-child { border-bottom: none; }
+  .ex-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--areia);
+    padding-top: 2px;
+  }
+  .ex-name {
+    font-weight: 500;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .ex-spec {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .ex-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 5px;
+  }
+  .level-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .level-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 1px 7px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    min-width: 52px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .level-tag.n1 { border-color: var(--ok); color: var(--ok); background: #EEF4F0; }
+  .level-tag.n2 { border-color: var(--caution); color: var(--caution); background: #FDF7EE; }
+  .level-tag.n3 { border-color: var(--alert); color: var(--alert); background: #FDF3EE; }
+  .ex-note {
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--sand-light);
+    padding: 5px 8px;
+    border-radius: 3px;
+    margin-top: 5px;
+    border-left: 2px solid var(--areia);
+  }
+  .ex-done-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    transition: all 0.15s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .ex-done-btn.checked { background: var(--ok); border-color: var(--ok); color: white; }
+
+  /* PART DIVIDER */
+  .part-div {
+    padding: 8px 16px;
+    background: var(--sand);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .part-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .part-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* TIMER */
+  .timer-row {
+    background: var(--sand);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 48px;
+  }
+  .timer-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); flex: 1; }
+  .timer-btn {
+    background: var(--ink);
+    color: var(--sand);
+    border: none;
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .timer-btn.running { background: var(--alert); }
+
+  /* PROGRESS */
+  .progress-strip {
+    background: var(--sand);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar { background: var(--border); height: 3px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { background: var(--areia); height: 100%; border-radius: 2px; transition: width 0.3s; }
+
+  /* DONE BTN */
+  .done-btn {
+    width: 100%;
+    background: var(--ink);
+    color: var(--sand);
+    border: none;
+    border-radius: 4px;
+    padding: 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+    transition: all 0.15s;
+  }
+  .done-btn:hover { background: var(--ink-soft); }
+  .done-btn.done { background: var(--ok); color: white; }
+
+  /* WEEKLY OVERVIEW */
+  .week-overview {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    padding: 14px 24px 0;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .ov-cell {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ov-cell.active { border-color: var(--areia); background: var(--sand); }
+  .ov-cell.done { border-color: var(--ok); background: #EEF4F0; }
+  .ov-cell .ov-day { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-bottom: 3px; }
+  .ov-cell .ov-icon { font-size: 15px; line-height: 1; }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 24px 0;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* REST */
+  .rest-day {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .rest-day .ri { font-size: 32px; margin-bottom: 10px; }
+  .rest-day .rt {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .rest-day .rd { font-size: 12px; }
+
+  @media (max-width: 480px) {
+    .header, .intro-band, .day-nav { padding-left: 16px; padding-right: 16px; }
+    .main { padding: 14px 16px 60px; }
+    .week-overview, .legend { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">BEACHMED</div>
+  <div class="header-title">FIFA 11+ Beach Soccer</div>
+  <div class="header-sub">Distribuição Semanal · Atletas de Futevôlei · Gabi Vila Real CREFITO 261789-F</div>
+</div>
+
+<div class="intro-band">
+  <strong>Como funciona:</strong> O protocolo FIFA 11+ Beach é distribuído em 3 sessões semanais, variando o foco por dia. Terça e quinta recebem o protocolo <strong>completo pré-treino</strong>. Sábado recebe versão <strong>reforço de prevenção</strong> — intensidade maior, fora do contexto de jogo. Cada exercício tem 3 níveis de progressão: avança quando dominar o atual sem compensação.
+</div>
+
+<div class="week-overview" id="weekOverview"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--ok)"></div>Nível 1 — Iniciante</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--caution)"></div>Nível 2 — Intermediário</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--alert)"></div>Nível 3 — Avançado</div>
+</div>
+
+<div class="day-nav" id="dayNav"></div>
+<div class="main" id="mainContent"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const DAYS = [
+  dayTerca(),
+  dayQuinta(),
+  daySabado(),
+  daySegunda(),
+  dayQuarta(),
+  daySexta()
+];
+
+const DAY_LABELS = ['TER','QUI','SÁB','SEG','QUA','SEX'];
+const DAY_ICONS = ['⚽','⚽','🏋️','😴','😴','😴'];
+const DAY_FULL = ['Terça','Quinta','Sábado','Segunda','Quarta','Sexta'];
+
+function dayTerca() {
+  return {
+    id: 'ter',
+    title: 'Terça · Protocolo Completo',
+    context: 'Pré-treino de futevôlei · descalço na areia · ~20 min',
+    pills: [
+      {label:'20 min', cls:''},
+      {label:'P1 + P2 + P3', cls:'green'},
+      {label:'Gesto: Ataque', cls:'blue'}
+    ],
+    info: 'Estrutura fiel ao FIFA 11+ original: Parte 1 (corrida 8min) + Parte 2 (força/equilíbrio/pliometria 10min) + Parte 3 (corrida alta intensidade 2min). Exercícios da Parte 2 adaptados aos padrões de lesão do futevôlei (Alves et al. RBCE 2015).',
+    blocks: [
+      { icon: '🏃', title: 'Parte 1 — Corrida', badge: '8 min', badgeCls: '', exercises: fifaParte1_terca() },
+      { icon: '💪', title: 'Parte 2 — Força · Equilíbrio · Pliometria', badge: '10 min', badgeCls: '', exercises: fifaParte2(false) },
+      { icon: '⚡', title: 'Parte 3 — Corrida Alta Intensidade', badge: '2 min', badgeCls: '', exercises: fifaParte3() }
+    ]
+  };
+}
+
+function dayQuinta() {
+  return {
+    id: 'qui',
+    title: 'Quinta · Protocolo Completo',
+    context: 'Pré-treino de futevôlei · descalço na areia · ~20 min',
+    pills: [
+      {label:'20 min', cls:''},
+      {label:'P1 + P2 + P3', cls:'green'},
+      {label:'Gesto: Pingo', cls:'blue'}
+    ],
+    info: '2ª sessão semanal. Parte 1 com variante de deslocamento para pingo — alterna o gesto específico da terça. Parte 2 idêntica: a consistência é o que gera adaptação neuromuscular.',
+    caution: '2º dia seguido de areia? Reduz 1 série em cada exercício da Parte 2.',
+    blocks: [
+      { icon: '🏃', title: 'Parte 1 — Corrida · Variante Pingo', badge: '8 min', badgeCls: '', exercises: fifaParte1_quinta() },
+      { icon: '💪', title: 'Parte 2 — Força · Equilíbrio · Pliometria', badge: '10 min', badgeCls: '', exercises: fifaParte2(false) },
+      { icon: '⚡', title: 'Parte 3 — Corrida Alta Intensidade', badge: '2 min', badgeCls: '', exercises: fifaParte3() }
+    ]
+  };
+}
+
+function daySabado() {
+  return {
+    id: 'sab',
+    title: 'Sábado · Reforço de Prevenção',
+    context: 'Sessão dedicada · sem jogo antes · maior volume · ~30 min',
+    pills: [
+      {label:'30 min', cls:''},
+      {label:'Volume alto', cls:'orange'},
+      {label:'Ambos os gestos', cls:''}
+    ],
+    info: 'Sessão dedicada exclusivamente ao protocolo — sem jogo ou treino antes. Aqui é onde avança de nível. Parte 2 com 4 séries. Execute cada exercício com máxima qualidade de movimento.',
+    blocks: [
+      { icon: '🏃', title: 'Parte 1 — Corrida · Ataque + Pingo', badge: '10 min', badgeCls: '', exercises: fifaParte1_sabado() },
+      { icon: '💪', title: 'Parte 2 — Força · Equilíbrio · Pliometria · Volume Alto', badge: '16 min', badgeCls: 'orange', exercises: fifaParte2(true) },
+      { icon: '⚡', title: 'Parte 3 — Corrida Alta Intensidade', badge: '2 min', badgeCls: '', exercises: fifaParte3() }
+    ]
+  };
+}
+
+function daySegunda() {
+  return { id: 'seg', rest: true, title: 'Segunda · Descanso', restText: 'Recuperação do fim de semana. Sem protocolo FIFA 11+ hoje.' };
+}
+function dayQuarta() {
+  return { id: 'qua', rest: true, title: 'Quarta · Descanso', restText: 'Dia de folga do protocolo. Se treinar outra modalidade, faça mobilidade dinâmica de 5 min como aquecimento.' };
+}
+function daySexta() {
+  return { id: 'sex', rest: true, title: 'Sexta · Descanso', restText: 'Véspera de sábado. Priorize recuperação — sono, hidratação e alimentação adequada.' };
+}
+
+// ─── FIFA 11+ EXERCISES ──────────────────────────────────────────────────────
+// Estrutura fiel ao FIFA 11+ original (Bizzini & Dvorak 2013):
+// Parte 1 — Corrida (8 min)
+// Parte 2 — 6 exercícios com 3 níveis: core, força MMII, equilíbrio, pliometria (10 min)
+// Parte 3 — Corrida de alta intensidade (2 min)
+// Adaptações: gestos e exercícios específicos para padrões de lesão do futevôlei
+// (Alves et al. RBCE 2015: joelho 26%, coluna lombar 23%, coxa 12%, pé 12%)
+
+// ─── PARTE 1 — CORRIDA (8 min) ───────────────────────────────────────────────
+
+function fifaParte1_terca() {
+  // Terça: gesto de salto para ataque
+  return [
+    { name: 'Corrida em linha reta', spec: 'Ida e volta 2× · ritmo leve-moderado', note: 'Base do aquecimento. Ativa padrão de corrida na areia — maior demanda de tornozelo e panturrilha que o gramado.', levels: null, rest: null },
+    { name: 'Corrida com circundução de quadril', spec: 'Ida e volta 2× · circundução para fora no apoio', note: 'Mobiliza quadril e ativa glúteo médio. Círculo completo — sem compensar com tronco.', levels: null, rest: null },
+    { name: 'Corrida com salto para ataque', spec: 'Ida e volta 2× · salta no ponto marcado, busca bola alta', note: 'Gesto específico do futevôlei: corrida de abordagem → salto vertical → testa/frente projeta para a bola. Aterrissagem em amortecimento — joelhos semiflexionados, quadril para trás.', levels: null, rest: null },
+    { name: 'Corrida com mudança de direção', spec: 'Ida e volta 2× · mudança a cada cone (5m)', note: 'Ativa padrão de desaceleração + aceleração. Essencial para gestos de disputa de bola no futevôlei.', levels: null, rest: null },
+    { name: 'Sprint progressivo', spec: 'Ida e volta 2× · 60% → 80% → 100%', note: 'Progressão de intensidade dentro da mesma repetição. Não vá a 100% sem passar pelos 60–80%.', levels: null, rest: null }
+  ];
+}
+
+function fifaParte1_quinta() {
+  // Quinta: gesto de deslocamento para pingo
+  return [
+    { name: 'Corrida em linha reta', spec: 'Ida e volta 2×', note: 'Base do aquecimento. Mantém o padrão de corrida na areia.', levels: null, rest: null },
+    { name: 'Corrida com circundução de quadril', spec: 'Ida e volta 2×', note: 'Mobiliza quadril e ativa glúteo médio. Prioritário no 2º dia.', levels: null, rest: null },
+    { name: 'Corrida + deslocamento para bola longa (pingo)', spec: 'Ida e volta 2× · corta em diagonal ao sinal, busca pingo distante', note: 'Gesto mais frequente no futevôlei: sprint → corte diagonal → desaceleração controlada. A travada é onde mais se lesiona — treinar o padrão completo é prevenção direta.', levels: null, rest: null },
+    { name: 'Corrida com mudança de direção', spec: 'Ida e volta 2× · mudança a cada cone', note: '2º dia: mesmo padrão da terça, volume mantido.', levels: null, rest: null },
+    { name: 'Sprint progressivo (reduzido)', spec: 'Ida e volta 1× · 70% → 100%', note: '2º dia de areia: volume reduzido no sprint. Qualidade > quantidade.', levels: null, rest: null }
+  ];
+}
+
+function fifaParte1_sabado() {
+  // Sábado: ambos os gestos + sprint extra
+  return [
+    { name: 'Corrida em linha reta', spec: 'Ida e volta 2×', note: 'Sessão dedicada — aquecimento progressivo.', levels: null, rest: null },
+    { name: 'Corrida com circundução de quadril', spec: 'Ida e volta 2×', note: 'Mobilização ampla de quadril antes dos gestos específicos.', levels: null, rest: null },
+    { name: 'Corrida com salto para ataque', spec: 'Ida e volta 2× · abordagem + salto', note: 'Sábado executa os dois gestos. Foco na qualidade — sem pressão de tempo de jogo.', levels: null, rest: null },
+    { name: 'Corrida + deslocamento para bola longa (pingo)', spec: 'Ida e volta 2× · corte diagonal + desaceleração', note: 'Segundo gesto específico. Treina a leitura de bola + controle de travada.', levels: null, rest: null },
+    { name: 'Sprint progressivo', spec: 'Ida e volta 3× · 60% → 80% → 100%', note: 'Sábado: 1 repetição extra — maior ativação neural antes da Parte 2.', levels: null, rest: null }
+  ];
+}
+
+// ─── PARTE 2 — FORÇA + EQUILÍBRIO + PLIOMETRIA (10 min) ──────────────────────
+// Fiel à estrutura original (6 exercícios, 3 níveis cada)
+// Adaptada aos padrões de lesão do futevôlei (Alves et al. 2015)
+
+function fifaParte2(volumeSab) {
+  const s = volumeSab ? '4' : '3'; // sábado: 4 séries
+  return [
+    // 1. PRANCHA ANTERIOR — core, coluna lombar (23% das lesões)
+    {
+      name: 'Prancha Anterior',
+      spec: 'Isometria de core · cotovelos e pontas dos pés',
+      note: 'Protege coluna lombar — 2ª região mais lesionada no futevôlei. Lombar neutra durante todo o hold. Não permite que o quadril afunde ou suba.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×20–30s · quadril neutro · respiração contínua` },
+        { tag: 'N2', cls: 'n2', text: `${s}×30–40s · elevação alterna de perna (5s hold)` },
+        { tag: 'N3', cls: 'n3', text: `${s}×40s · elevação de perna + braço oposto simultâneo` }
+      ],
+      rest: null
+    },
+    // 2. PRANCHA LATERAL — core lateral, estabilidade lombo-pélvica
+    {
+      name: 'Prancha Lateral',
+      spec: 'Isometria lateral · cotovelo ou mão de apoio',
+      note: 'Ativa quadrado lombar e glúteo médio — estabilidade lombo-pélvica essencial nos chutes e mudanças de direção do futevôlei. Quadril não pode afundar.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×20s/lado · joelho de apoio · quadril elevado` },
+        { tag: 'N2', cls: 'n2', text: `${s}×30s/lado · apoio nos pés · quadril neutro` },
+        { tag: 'N3', cls: 'n3', text: `${s}×30s/lado · eleva perna de cima durante o hold` }
+      ],
+      rest: { label: 'Descanso', s: 30 }
+    },
+    // 3. NORDIC HAMSTRING — isquiotibiais excêntricos (coxa: 12% das lesões)
+    {
+      name: 'Nordic Hamstring',
+      spec: 'Descida excêntrica controlada · parceiro segura os pés na areia',
+      note: 'Maior evidência de redução de lesão muscular em esportes de salto e sprint (Al Attar et al. 2017). Coxa é a 3ª região mais lesionada no futevôlei. Controla a descida ao máximo — sem colapso.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×5 · descida livre · segura com mãos no fim` },
+        { tag: 'N2', cls: 'n2', text: `${s}×6 · descida 4s controlada · sem apoio das mãos` },
+        { tag: 'N3', cls: 'n3', text: `${s}×8 · descida máxima · elástico resistido` }
+      ],
+      rest: { label: 'Descanso', s: 90 }
+    },
+    // 4. EQUILÍBRIO EM APOIO ÚNICO — propriocepção + joelho (26% das lesões)
+    {
+      name: 'Equilíbrio em Apoio Único com Gesto de Chute',
+      spec: 'Apoio unilateral na areia · simula gesto de passe ou chute',
+      note: 'Joelho é a região mais lesionada no futevôlei (26%). A areia já adiciona instabilidade — não force amplitude se perder equilíbrio. O gesto de chute ativa controle neuromuscular específico do esporte.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×30s/lado · olhos abertos · perna livre em flexão` },
+        { tag: 'N2', cls: 'n2', text: `${s}×30s/lado · simula passe com perna livre · olhos abertos` },
+        { tag: 'N3', cls: 'n3', text: `${s}×30s/lado · simula chute com perturbação · olhos fechados` }
+      ],
+      rest: { label: 'Descanso', s: 45 }
+    },
+    // 5. AGACHAMENTO UNILATERAL — joelho + tornozelo (pé: 12% das lesões)
+    {
+      name: 'Agachamento Unilateral com Elevação de Panturrilha',
+      spec: 'Agachamento + rise no topo · apoio unilateral · areia',
+      note: 'Combina prevenção de joelho patelar (agachamento controlado) e fortalecimento de panturrilha/tornozelo (elevação no topo). Pé e tornozelo são a 4ª região mais lesionada.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×8/lado · descida até 60° · rise bilateral no topo` },
+        { tag: 'N2', cls: 'n2', text: `${s}×10/lado · descida 90° · rise unilateral no topo` },
+        { tag: 'N3', cls: 'n3', text: `${s}×10/lado · descida 90° · rise excêntrico 3s` }
+      ],
+      rest: { label: 'Descanso', s: 60 }
+    },
+    // 6. SALTOS — pliometria + controle de aterrissagem
+    {
+      name: 'Salto Vertical com Controle de Aterrissagem',
+      spec: 'Salto máximo · aterrissagem em amortecimento · simula ataque',
+      note: 'Pliometria específica do futevôlei — o salto para ataque é o gesto mais explosivo do esporte. A aterrissagem é onde ocorrem lesões de joelho e tornozelo. Joelhos semiflexionados, quadril para trás, sem valgo.',
+      levels: [
+        { tag: 'N1', cls: 'n1', text: `${s}×5 · bilateral · aterrissagem controlada e pausa` },
+        { tag: 'N2', cls: 'n2', text: `${s}×6 · bilateral · aterrissagem + gesto de ataque no pico` },
+        { tag: 'N3', cls: 'n3', text: `${s}×6 · após 3 passos de corrida · aterrissagem unilateral` }
+      ],
+      rest: { label: 'Descanso', s: 60 }
+    }
+  ];
+}
+
+// ─── PARTE 3 — CORRIDA ALTA INTENSIDADE (2 min) ───────────────────────────────
+
+function fifaParte3() {
+  return [
+    { name: 'Corrida progressiva com sprints', spec: '2 min · alterna trote (10s) + sprint (5s) · 4 ciclos', note: 'Finaliza o protocolo com demanda cardiovascular e neuromuscular alta. Idêntico à Parte 3 do FIFA 11+ original — ativa o sistema nervoso para o treino/jogo que vem na sequência.', levels: null, rest: null },
+    { name: 'Corrida com mudança de direção explosiva', spec: '2×10m · 100% velocidade · corta ao sinal', note: 'Última demanda do protocolo. Saída explosiva, corte brusco, retorno. Simula leitura de bola em jogo real.', levels: null, rest: null }
+  ];
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentDay = 0;
+const timers = {};
+const timerIntervals = {};
+
+function key(d, i) { return `fifa11_d${d}_ex${i}`; }
+function keyDone(d) { return `fifa11_d${d}_done`; }
+function isExDone(d, i) { return localStorage.getItem(key(d, i)) === '1'; }
+function setExDone(d, i, v) { localStorage.setItem(key(d, i), v ? '1' : '0'); }
+function isDayDone(d) { return localStorage.getItem(keyDone(d)) === '1'; }
+function setDayDone(d, v) { localStorage.setItem(keyDone(d), v ? '1' : '0'); }
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
+  renderOverview();
+  renderDayNav();
+  renderMain();
+}
+
+function renderOverview() {
+  const el = document.getElementById('weekOverview');
+  el.innerHTML = DAYS.map((d, i) => {
+    const done = isDayDone(i);
+    return `<div class="ov-cell ${i===currentDay?'active':''} ${done?'done':''}" onclick="selectDay(${i})">
+      <div class="ov-day">${DAY_LABELS[i]}</div>
+      <div class="ov-icon">${d.rest ? '😴' : DAY_ICONS[i]}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDayNav() {
+  const el = document.getElementById('dayNav');
+  el.innerHTML = DAYS.map((d, i) =>
+    `<button class="day-btn ${i===currentDay?'active':''}" onclick="selectDay(${i})">${DAY_FULL[i]}</button>`
+  ).join('');
+}
+
+function renderMain() {
+  const day = DAYS[currentDay];
+  const el = document.getElementById('mainContent');
+
+  if (day.rest) {
+    el.innerHTML = `<div class="rest-day">
+      <div class="ri">😴</div>
+      <div class="rt">${day.title}</div>
+      <div class="rd">${day.restText}</div>
+    </div>`;
+    return;
+  }
+
+  let exIndex = 0;
+  let exTotal = 0;
+  day.blocks.forEach(b => { exTotal += b.exercises.length; });
+  let doneCnt = 0;
+  for (let i = 0; i < exTotal; i++) { if (isExDone(currentDay, i)) doneCnt++; }
+  const pct = exTotal > 0 ? Math.round(doneCnt / exTotal * 100) : 0;
+  const dayDone = isDayDone(currentDay);
+
+  let html = '';
+
+  html += `<div class="day-header">
+    <div class="day-title">${day.title}</div>
+    <div class="day-context">${day.context}</div>
+    <div class="pills">${day.pills.map(p => `<span class="pill ${p.cls}">${p.label}</span>`).join('')}</div>
+  </div>`;
+
+  if (day.info) html += `<div class="info-box"><strong>ℹ </strong>${day.info}</div>`;
+  if (day.caution) html += `<div class="caution-box">⚠ ${day.caution}</div>`;
+
+  html += `<div class="progress-strip">
+    <div class="progress-label"><span>Progresso</span><span>${doneCnt}/${exTotal} · ${pct}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  </div>`;
+
+  day.blocks.forEach((block, bi) => {
+    const collKey = `fifa_block_${currentDay}_${bi}`;
+    const collapsed = localStorage.getItem(collKey) === '1';
+
+    html += `<div class="block ${collapsed?'collapsed':''}" id="bl_${bi}">
+      <div class="block-header" onclick="toggleBlock(${bi})">
+        <div class="block-left">
+          <span class="block-icon">${block.icon}</span>
+          <span class="block-title">${block.title}</span>
+          <span class="block-badge ${block.badgeCls}">${block.badge}</span>
+        </div>
+        <span class="block-chevron">▾</span>
+      </div>
+      <div class="block-body">`;
+
+    block.exercises.forEach((ex, ei_local) => {
+      const ei = exIndex++;
+      const chk = isExDone(currentDay, ei);
+      const tid = `t_${bi}_${ei_local}`;
+
+      html += `<div class="ex-row">
+        <div class="ex-num">${String(ei_local+1).padStart(2,'0')}</div>
+        <div>
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-spec">${ex.spec}</div>
+          ${ex.levels ? `<div class="ex-levels">${ex.levels.map(l =>
+            `<div class="level-row"><span class="level-tag ${l.cls}">${l.tag}</span><span>${l.text}</span></div>`
+          ).join('')}</div>` : ''}
+          ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
+          ${ex.rest ? `<div class="timer-row">
+            <div class="timer-display" id="td_${tid}">${fmt(ex.rest.s)}</div>
+            <div class="timer-label">⏸ ${ex.rest.label}</div>
+            <button class="timer-btn" id="tb_${tid}" onclick="startTimer('${tid}',${ex.rest.s})">INICIAR</button>
+          </div>` : ''}
+        </div>
+        <button class="ex-done-btn ${chk?'checked':''}" onclick="toggleEx(${ei})">${chk?'✓':''}</button>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `<button class="done-btn ${dayDone?'done':''}" onclick="toggleDone()">
+    ${dayDone ? '✓ Protocolo concluído' : 'Marcar como concluído'}
+  </button>`;
+
+  el.innerHTML = html;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
+function selectDay(i) {
+  currentDay = i;
+  render();
+}
+
+function toggleBlock(bi) {
+  const el = document.getElementById(`bl_${bi}`);
+  const c = el.classList.toggle('collapsed');
+  localStorage.setItem(`fifa_block_${currentDay}_${bi}`, c ? '1' : '0');
+}
+
+function toggleEx(ei) {
+  setExDone(currentDay, ei, !isExDone(currentDay, ei));
+  renderMain(); renderOverview();
+}
+
+function toggleDone() {
+  setDayDone(currentDay, !isDayDone(currentDay));
+  renderMain(); renderOverview();
+}
+
+function fmt(s) {
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+function startTimer(id, total) {
+  if (timerIntervals[id]) {
+    clearInterval(timerIntervals[id]);
+    delete timerIntervals[id];
+    timers[id] = total;
+    const td = document.getElementById(`td_${id}`);
+    const tb = document.getElementById(`tb_${id}`);
+    if (td) td.textContent = fmt(total);
+    if (tb) { tb.textContent = 'INICIAR'; tb.classList.remove('running'); }
+    return;
+  }
+  timers[id] = timers[id] !== undefined ? timers[id] : total;
+  const tb = document.getElementById(`tb_${id}`);
+  if (tb) { tb.textContent = 'PARAR'; tb.classList.add('running'); }
+  timerIntervals[id] = setInterval(() => {
+    timers[id]--;
+    const td = document.getElementById(`td_${id}`);
+    if (td) td.textContent = fmt(Math.max(0, timers[id]));
+    if (timers[id] <= 0) {
+      clearInterval(timerIntervals[id]);
+      delete timerIntervals[id];
+      timers[id] = total;
+      const tb2 = document.getElementById(`tb_${id}`);
+      const td2 = document.getElementById(`td_${id}`);
+      if (tb2) { tb2.textContent = 'INICIAR'; tb2.classList.remove('running'); }
+      if (td2) td2.textContent = fmt(total);
+    }
+  }, 1000);
+}
+
+render();
+</script>
+</body>
+</html>
